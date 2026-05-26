@@ -1,0 +1,14 @@
+CompileFlags:
+  CompilationDatabase: build/app/
+  Add:
+    - -Wno-unknown-warning-option
+    - -Wno-ignored-optimization-argument
+    - -Imodules/lib/matter/src
+    - -Imodules/lib/matter/src/include
+    - -Imodules/lib/matter/zzz_generated/app-common
+  Remove:
+    -fno-printf-return-value
+    -fallow-store-data-races
+    -mno-unaligned-access
+    -mfp16-format*
+    -fno-reorder-functions
