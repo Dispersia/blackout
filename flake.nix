@@ -105,6 +105,9 @@
       {
         devShells.default = pkgs.mkShell {
           packages = [
+            (pkgs.writeShellScriptBin "clangd" ''
+              exec ${pkgs.clang-tools}/bin/clangd --query-driver="${zephyrSdk}/arm-zephyr-eabi/bin/arm-zephyr-eabi-*" "$@"
+            '')
             zephyrSdk
             matterPythonEnv
             zephyr.hosttools-nix

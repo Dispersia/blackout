@@ -10,10 +10,9 @@
 
 LOG_MODULE_REGISTER(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
-int main()
-{
-	CHIP_ERROR err = AppTask::Instance().StartApp();
+int main() {
+  CHIP_ERROR err = AppTask::Instance().StartApp();
 
-	LOG_ERR("Exited with code %" CHIP_ERROR_FORMAT, err.Format());
-	return err == CHIP_NO_ERROR ? EXIT_SUCCESS : EXIT_FAILURE;
+  LOG_ERR("Exited with code %" CHIP_ERROR_FORMAT, err.Format());
+  return err == CHIP_NO_ERROR ? EXIT_SUCCESS : EXIT_FAILURE;
 }
