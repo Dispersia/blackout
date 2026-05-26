@@ -19,7 +19,7 @@
         pkgs = import nixpkgs {
           inherit system;
           config.allowUnfree = true;
-          config.permittedInsecurePackages = [ "segger-jlink-qt4-874" ];
+          config.permittedInsecurePackages = [ "segger-jlink-qt4-874" "python3.13-ecdsa-0.19.2" ];
           config.segger-jlink.acceptLicense = true;
         };
 
@@ -27,6 +27,21 @@
 
         zephyrSdk = zephyr."sdk-0_16".override {
           targets = [ "arm-zephyr-eabi" ];
+        };
+
+        matterPythonEnv = zephyr.pythonEnv.override {
+          extraPackages = ps: [
+            ps.python-path
+            ps.cbor2
+            (ps.ecdsa.overridePythonAttrs {
+              doCheck = false;
+              meta = ps.ecdsa.meta // { knownVulnerabilities = []; };
+            })
+            ps.qrcode
+            ps.python-stdnum
+            ps.construct
+            ps.bitarray
+          ];
         };
 
         zapTool = pkgs.stdenv.mkDerivation {
@@ -91,7 +106,7 @@
         devShells.default = pkgs.mkShell {
           packages = [
             zephyrSdk
-            zephyr.pythonEnv
+            matterPythonEnv
             zephyr.hosttools-nix
             pkgs.cmake
             pkgs.ninja
@@ -101,6 +116,7 @@
             pkgs.wget
             pkgs.nrfutil
             pkgs.clang-tools
+            pkgs.gn
             zapTool
           ];
 

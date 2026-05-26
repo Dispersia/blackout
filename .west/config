@@ -5,3 +5,6 @@ file = west.yml
 [zephyr]
 base = external/zephyr
 
+[build]
+board = nrf54l15dk/nrf54l15/cpuapp
+
