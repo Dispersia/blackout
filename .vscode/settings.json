@@ -2,5 +2,6 @@
     "nrf-connect.applications": [
         "${workspaceFolder}/application"
     ],
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "cmake.sourceDirectory": "/home/dispe/development/blackout/application"
 }
