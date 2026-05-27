@@ -151,7 +151,11 @@
                 | awk -F. '{printf "%d.%d.%d",$1,$2,$3}')
               cat > "$ZAP_INSTALL_DIR/zap-cli" <<EOF
 #!/bin/sh
-echo "Version: $ZAP_VER"
+if [ "\$1" = "--version" ]; then
+    echo "Version: $ZAP_VER"
+else
+    exec ${zapTool}/bin/zap "\$@"
+fi
 EOF
               chmod +x "$ZAP_INSTALL_DIR/zap-cli"
             fi
