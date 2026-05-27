@@ -41,6 +41,7 @@
             ps.python-stdnum
             ps.construct
             ps.bitarray
+            ps.wget
           ];
         };
 
@@ -94,11 +95,18 @@
             dpkg-deb -x $src .
           '';
 
+          runtimeLibs = pkgs.lib.makeLibraryPath [
+            pkgs.stdenv.cc.cc.lib
+            pkgs.libGL
+            pkgs.mesa
+          ];
+
           installPhase = ''
             mkdir -p $out/lib/zap
             cp -r opt/zap/. $out/lib/zap/
             mkdir -p $out/bin
-            makeWrapper $out/lib/zap/zap $out/bin/zap
+            makeWrapper $out/lib/zap/zap $out/bin/zap \
+              --prefix LD_LIBRARY_PATH : "$runtimeLibs"
           '';
         };
       in
@@ -127,6 +135,26 @@
           shellHook = ''
             export ZEPHYR_SDK_INSTALL_DIR=${zephyrSdk}
             export ZEPHYR_TOOLCHAIN_VARIANT=zephyr
+            export ELECTRON_OZONE_PLATFORM_HINT=wayland
+            export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib pkgs.libGL pkgs.mesa ]}''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+            # Set up .zap-install with Nix-patched ZAP binaries
+            ZAP_INSTALL_DIR="$PWD/external/modules/lib/matter/.zap-install"
+            if [ ! -L "$ZAP_INSTALL_DIR/zap" ] || \
+               [ "$(readlink "$ZAP_INSTALL_DIR/zap")" != "${zapTool}/lib/zap/zap" ]; then
+              rm -rf "$ZAP_INSTALL_DIR"
+              mkdir -p "$ZAP_INSTALL_DIR"
+              ln -sf ${zapTool}/lib/zap/zap "$ZAP_INSTALL_DIR/zap"
+              # Create a zap-cli stub that reports the version the Matter SDK expects
+              MATTER_DIR="$PWD/external/modules/lib/matter"
+              ZAP_VER=$(sed 's/^v//;s/-.*//' "$MATTER_DIR/scripts/setup/zap.version" \
+                | awk -F. '{printf "%d.%d.%d",$1,$2,$3}')
+              cat > "$ZAP_INSTALL_DIR/zap-cli" <<EOF
+#!/bin/sh
+echo "Version: $ZAP_VER"
+EOF
+              chmod +x "$ZAP_INSTALL_DIR/zap-cli"
+            fi
           '';
         };
       });
