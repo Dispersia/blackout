@@ -120,6 +120,7 @@
             pkgs.nrfutil
             pkgs.clang-tools
             pkgs.gn
+            pkgs.screen
             zapTool
           ];
 
