@@ -1,24 +1,15 @@
-/*
- * Copyright (c) 2026 Nordic Semiconductor ASA
- *
- * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
- */
-
 / {
 	aliases {
-		/* Use watchdog wdt31 as the application watchdog */
 		watchdog0 = &wdt31;
 	};
 };
 
-/* BME680 (temperature pressure and humidity sensor) */
 &i2c21 {
 	bme688@76 {
 		status = "okay";
 	};
 };
 
-/* restore full RRAM and SRAM space - by default some parts are dedicated to FLRP */
 &cpuapp_rram {
 	reg = <0x0 DT_SIZE_K(1524)>;
 };
