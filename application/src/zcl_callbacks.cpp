@@ -40,11 +40,11 @@ public:
 };
 
 BlackoutDelegate sDelegate;
-} /* namespace */
+} // namespace
 
 void MatterPostAttributeChangeCallback(
-    const app::ConcreteAttributePath &attributePath, uint8_t type, uint16_t size,
-    uint8_t *value) {
+    const app::ConcreteAttributePath &attributePath, uint8_t type,
+    uint16_t size, uint8_t *value) {
   switch (attributePath.mClusterId) {
   case Identify::Id:
     break;
